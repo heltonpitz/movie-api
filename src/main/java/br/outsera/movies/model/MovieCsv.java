@@ -6,6 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.logging.log4j.util.Strings;
+
+import java.time.LocalDate;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -14,7 +18,7 @@ import lombok.Setter;
 public class MovieCsv {
 
     @CsvBindByName
-    private String year;
+    private Integer year;
 
     @CsvBindByName
     private String title;
@@ -30,11 +34,11 @@ public class MovieCsv {
 
     public MovieEntity toEntity() {
         return MovieEntity.builder()
-            .years(this.getYear())
-            .title(this.getTitle())
-            .studios(this.getStudios())
-            .producers(this.getProducers())
-            .winner(this.getWinner())
+            .years(LocalDate.of(this.getYear(), 1, 1))
+            .title(Objects.requireNonNullElse(this.getTitle(), Strings.EMPTY).toUpperCase())
+            .studios(Objects.requireNonNullElse(this.getStudios(), Strings.EMPTY).toUpperCase())
+            .producers(Objects.requireNonNullElse(this.getProducers(), Strings.EMPTY).toUpperCase())
+            .winner("YES".compareToIgnoreCase(this.getWinner()) == 0)
             .build();
     }
 }

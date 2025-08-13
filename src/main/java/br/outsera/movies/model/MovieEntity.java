@@ -7,6 +7,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.time.LocalDate;
+
 @Builder
 @Table(name = "MOVIE")
 public record MovieEntity(
@@ -16,7 +18,7 @@ public record MovieEntity(
     Long id,
 
     @Column
-    String years,
+    LocalDate years,
 
     @Column
     String title,
@@ -28,7 +30,7 @@ public record MovieEntity(
     String producers,
 
     @Column
-    String winner
+    Boolean winner
 
 ) {
 }
