@@ -1,20 +1,17 @@
 spring:
-  datasource:
-    url: jdbc:h2:mem:meu_banco
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-
-  h2:
-    enabled: true
-    console.path: /h2-console
-
-  jpa:
-    hibernate.ddl-auto: create-drop
-    show-sql: true
+  r2dbc:
+    url: r2dbc:h2:mem:///movies
+  sql:
+    init:
+      mode: always
 
   application:
     name: movies
+
+api:
+  csv-file:
+    path: "__files\\movielist.csv"
+    separator: ";"
 
 server:
   port: 8080
