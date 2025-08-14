@@ -112,15 +112,20 @@ Endereço swagger: http://localhost:8080/swagger-ui.html
 
 ## 🔄 Fluxo da Aplicação
 
+Fluxo inicial (Inicialização do banco em
+memória) - [StartupRunner.java](src%2Fmain%2Fjava%2Fbr%2Foutsera%2Fmovies%2FStartupRunner.java)
 ```mermaid
 flowchart TD
     A[Arquivo CSV de Filmes] --> B[MovieService - Processamento]
-    B --> C[MovieController - Endpoint /movie/awards-result]
-    C --> D[Swagger UI / Documentação OpenAPI]
+    B --> C[H2 - Persiste Dados]
 ```
 
----
+Fluxo de consulta do
+Resultado - [MovieController.java](src%2Fmain%2Fjava%2Fbr%2Foutsera%2Fmovies%2Fcontroller%2FMovieController.java)
 
-## 📄 Licença
-
-Este projeto está licenciado sob a **Apache 2.0 License**.
+```mermaid
+flowchart TD
+    A[MovieController - Endpoint /movie/awards-result] --> B[H2 - Consulta Dados]
+    B --> C[MovieService - Processamento]
+    C --> D[Retorno dos dados]
+```
