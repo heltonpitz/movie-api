@@ -12,10 +12,10 @@ public record MovieAwardsResultDTO(
 
     Integer interval,
 
-    @JsonFormat(pattern = "yyyy")
+    @JsonFormat(pattern = "yyyy", shape = JsonFormat.Shape.STRING)
     LocalDate previousWin,
 
-    @JsonFormat(pattern = "yyyy")
+    @JsonFormat(pattern = "yyyy", shape = JsonFormat.Shape.STRING)
     LocalDate followingWin
 ) {
 }

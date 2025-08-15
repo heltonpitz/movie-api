@@ -1,0 +1,17 @@
+spring:
+  r2dbc:
+    url: r2dbc:h2:mem:///movies
+  sql:
+    init:
+      mode: always
+
+  application:
+    name: movies
+
+api:
+  csv-file:
+    path: "__files\\movielist.csv"
+    separator: ";"
+
+server:
+  port: 8080

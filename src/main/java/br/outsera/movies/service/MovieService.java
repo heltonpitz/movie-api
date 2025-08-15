@@ -65,7 +65,8 @@ public class MovieService {
             .map(movieEntity -> MovieAwardsResultResponseDTO.builder()
                 .min(getMinInterval(movieEntity))
                 .max(getMaxInterval(movieEntity))
-                .build());
+                .build())
+            .defaultIfEmpty(MovieAwardsResultResponseDTO.builder().build());
     }
 
     private List<MovieAwardsResultDTO> getMinInterval(Map<String, List<MovieEntity>> movieEntity) {
