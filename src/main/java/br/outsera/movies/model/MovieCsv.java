@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.logging.log4j.util.Strings;
 
-import java.time.LocalDate;
 import java.util.Objects;
 
 @Getter
@@ -34,10 +33,10 @@ public class MovieCsv {
 
     public MovieEntity toEntity() {
         return MovieEntity.builder()
-            .years(LocalDate.of(this.getYear(), 1, 1))
-            .title(Objects.requireNonNullElse(this.getTitle(), Strings.EMPTY).toUpperCase())
-            .studios(Objects.requireNonNullElse(this.getStudios(), Strings.EMPTY).toUpperCase())
-            .producers(Objects.requireNonNullElse(this.getProducers(), Strings.EMPTY).toUpperCase())
+            .years(this.getYear())
+            .title(Objects.requireNonNullElse(this.getTitle(), Strings.EMPTY))
+            .studios(Objects.requireNonNullElse(this.getStudios(), Strings.EMPTY))
+            .producers(Objects.requireNonNullElse(this.getProducers(), Strings.EMPTY))
             .winner("YES".compareToIgnoreCase(this.getWinner()) == 0)
             .build();
     }

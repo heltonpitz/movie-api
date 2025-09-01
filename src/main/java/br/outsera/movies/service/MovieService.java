@@ -14,12 +14,12 @@ import reactor.core.publisher.Mono;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -57,65 +57,62 @@ public class MovieService {
     }
 
     public Mono<MovieAwardsResultResponseDTO> getMovieAwardsResult() {
+
         return repository.getMovieAwardsResult()
             .collect(Collectors.groupingBy(MovieEntity::producers))
             .map(stringListMap -> stringListMap.entrySet().stream()
                 .filter(entry -> entry.getValue().size() > 1)
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)))
             .map(movieEntity -> MovieAwardsResultResponseDTO.builder()
-                .min(getMinInterval(movieEntity))
-                .max(getMaxInterval(movieEntity))
+                .min(getMinIntervalResult(calculateIntervals(movieEntity)))
+                .max(getMaxIntervalResult(calculateIntervals(movieEntity)))
                 .build())
             .defaultIfEmpty(MovieAwardsResultResponseDTO.builder().build());
+
     }
 
-    private List<MovieAwardsResultDTO> getMinInterval(Map<String, List<MovieEntity>> movieEntity) {
-        return movieEntity.entrySet().stream()
-            .map(stringListEntry ->
+    private List<MovieAwardsResultDTO> calculateIntervals(Map<String, List<MovieEntity>> movieEntity) {
+        return movieEntity.values().stream()
+            .flatMap(movieEntities ->
             {
-                var movie = stringListEntry.getValue().stream()
+                var sortedMovies = movieEntities.stream()
+                    .sorted(Comparator.comparingInt(MovieEntity::years))
                     .toList();
 
-                List<Long> diffs = new ArrayList<>();
-                for (int i = 1; i < movie.size(); i++) {
-                    diffs.add(ChronoUnit.YEARS.between(movie.get(i - 1).years(), movie.get(i).years()));
-                }
+                return IntStream.range(1, sortedMovies.size())
+                    .mapToObj(movieIndex -> {
+                        var previousMovie = sortedMovies.get(movieIndex - 1);
+                        var currentMovie = sortedMovies.get(movieIndex);
+                        int interval = currentMovie.years() - previousMovie.years();
+                        return MovieAwardsResultDTO.builder()
+                            .producers(currentMovie.producers())
+                            .previousWin(previousMovie.years())
+                            .followingWin(currentMovie.years())
+                            .interval(interval)
+                            .build();
+                    });
 
-                Long minInterval = Collections.min(diffs);
-                int minIndex = diffs.indexOf(minInterval);
-
-                return MovieAwardsResultDTO.builder()
-                    .producers(stringListEntry.getKey())
-                    .followingWin(movie.get(minIndex + 1).years())
-                    .previousWin(minIndex < 0 ? movie.getFirst().years() : movie.get(minIndex).years())
-                    .interval(minInterval.intValue())
-                    .build();
             })
             .toList();
     }
 
-    private static List<MovieAwardsResultDTO> getMaxInterval(Map<String, List<MovieEntity>> movieEntity) {
-        return movieEntity.entrySet().stream()
-            .map(stringListEntry ->
-            {
-                var movie = stringListEntry.getValue().stream()
-                    .toList();
+    private List<MovieAwardsResultDTO> getMaxIntervalResult(List<MovieAwardsResultDTO> movieAwardResults) {
+        return movieAwardResults.stream()
+            .filter(movieAwardResult -> movieAwardResults.stream()
+                .max(Comparator.comparingInt(MovieAwardsResultDTO::interval)).stream()
+                .findAny()
+                .orElse(MovieAwardsResultDTO.builder().build()).interval()
+                .equals(movieAwardResult.interval()))
+            .toList();
+    }
 
-                List<Long> diffs = new ArrayList<>();
-                for (int i = 1; i < movie.size(); i++) {
-                    diffs.add(ChronoUnit.YEARS.between(movie.get(i - 1).years(), movie.get(i).years()));
-                }
-
-                Long maxInterval = Collections.max(diffs);
-                int maxIndex = diffs.indexOf(maxInterval);
-
-                return MovieAwardsResultDTO.builder()
-                    .producers(stringListEntry.getKey())
-                    .followingWin(movie.get(maxIndex + 1).years())
-                    .previousWin(maxIndex < 0 ? movie.getLast().years() : movie.get(maxIndex).years())
-                    .interval(maxInterval.intValue())
-                    .build();
-            })
+    private List<MovieAwardsResultDTO> getMinIntervalResult(List<MovieAwardsResultDTO> movieAwardResults) {
+        return movieAwardResults.stream()
+            .filter(movieAwardResult -> movieAwardResults.stream()
+                .min(Comparator.comparingInt(MovieAwardsResultDTO::interval)).stream()
+                .findAny()
+                .orElse(MovieAwardsResultDTO.builder().build()).interval()
+                .equals(movieAwardResult.interval()))
             .toList();
     }
 }

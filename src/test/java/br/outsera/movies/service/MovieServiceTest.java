@@ -11,7 +11,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
-import java.time.LocalDate;
 import java.util.Arrays;
 
 import static org.mockito.Mockito.*;
@@ -29,7 +28,7 @@ class MovieServiceTest {
     private MovieEntity createMovie(String title, Integer year, String producers, Boolean winner) {
         return MovieEntity.builder()
             .title(title)
-            .years(LocalDate.of(year, 1, 1))
+            .years(year)
             .producers(producers)
             .winner(winner)
             .build();
@@ -54,24 +53,16 @@ class MovieServiceTest {
         // When & Then
         StepVerifier.create(movieService.getMovieAwardsResult())
             .expectNextMatches(result -> {
-                assert result.min().size() == 2;
-                assert result.max().size() == 2;
+                assert result.min().size() == 1;
+                assert result.max().size() == 1;
                 assert result.min().getFirst().producers().equals("Producer A");
                 assert result.min().getFirst().interval() == 1;
-                assert result.min().getFirst().previousWin().getYear() == 2000;
-                assert result.min().getFirst().followingWin().getYear() == 2001;
-                assert result.max().getFirst().producers().equals("Producer A");
-                assert result.max().getFirst().interval() == 1;
-                assert result.max().getFirst().previousWin().getYear() == 2000;
-                assert result.max().getFirst().followingWin().getYear() == 2001;
-                assert result.min().getLast().producers().equals("Producer B");
-                assert result.min().getLast().interval() == 13;
-                assert result.min().getLast().previousWin().getYear() == 1990;
-                assert result.min().getLast().followingWin().getYear() == 2003;
-                assert result.max().getLast().producers().equals("Producer B");
-                assert result.max().getLast().interval() == 13;
-                assert result.max().getLast().previousWin().getYear() == 1990;
-                assert result.max().getLast().followingWin().getYear() == 2003;
+                assert result.min().getFirst().previousWin() == 2000;
+                assert result.min().getFirst().followingWin() == 2001;
+                assert result.max().getFirst().producers().equals("Producer B");
+                assert result.max().getFirst().interval() == 13;
+                assert result.max().getFirst().previousWin() == 1990;
+                assert result.max().getFirst().followingWin() == 2003;
                 return true;
             })
             .verifyComplete();

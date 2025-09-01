@@ -7,8 +7,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.time.LocalDate;
-
 @Builder
 @Table(name = "MOVIE")
 public record MovieEntity(
@@ -18,7 +16,7 @@ public record MovieEntity(
     Long id,
 
     @Column
-    LocalDate years,
+    int years,
 
     @Column
     String title,

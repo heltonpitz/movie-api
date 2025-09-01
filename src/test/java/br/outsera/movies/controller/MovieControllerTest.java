@@ -13,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -45,15 +44,15 @@ class MovieControllerTest {
         var minInterval = MovieAwardsResultDTO.builder()
             .producers("Producer A")
             .interval(1)
-            .previousWin(LocalDate.of(2000, 1, 1))
-            .followingWin(LocalDate.of(2001, 1, 1))
+            .previousWin(2000)
+            .followingWin(2001)
             .build();
 
         var maxInterval = MovieAwardsResultDTO.builder()
             .producers("Producer B")
             .interval(13)
-            .previousWin(LocalDate.of(1990, 1, 1))
-            .followingWin(LocalDate.of(2003, 1, 1))
+            .previousWin(1990)
+            .followingWin(2003)
             .build();
 
         var expectedResult = MovieAwardsResultResponseDTO.builder()
@@ -113,22 +112,22 @@ class MovieControllerTest {
         var minInterval1 = MovieAwardsResultDTO.builder()
             .producers("Producer A")
             .interval(1)
-            .previousWin(LocalDate.of(2000, 1, 1))
-            .followingWin(LocalDate.of(2001, 1, 1))
+            .previousWin(2000)
+            .followingWin(2001)
             .build();
 
         var minInterval2 = MovieAwardsResultDTO.builder()
             .producers("Producer C")
             .interval(1)
-            .previousWin(LocalDate.of(2005, 1, 1))
-            .followingWin(LocalDate.of(2006, 1, 1))
+            .previousWin(2005)
+            .followingWin(2006)
             .build();
 
         var maxInterval = MovieAwardsResultDTO.builder()
             .producers("Producer B")
             .interval(13)
-            .previousWin(LocalDate.of(1990, 1, 1))
-            .followingWin(LocalDate.of(2003, 1, 1))
+            .previousWin(1990)
+            .followingWin(2003)
             .build();
 
         var expectedResult = MovieAwardsResultResponseDTO.builder()
